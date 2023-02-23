@@ -21,7 +21,7 @@ public class JpaBasicConfig {
         this.tx = em.getTransaction();
 
         return args -> {
-            example04();
+            example05();
         };
     }
 
@@ -77,5 +77,17 @@ public class JpaBasicConfig {
         Member member1 = em.find(Member.class, 1L);  // 테이블에 저장된 객체를 영속성 컨텍스트의 1차 캐시에서 조회
         member1.setEmail("hgd1@yahoo.co.kr");       //  setter 메서드로 정보를 변경
         tx.commit();   // 다시 DB 테이블에 저장
+    }
+
+    private void example05() {
+        tx.begin();  // Transaction 시작
+        em.persist(new Member("hgd1@gmail.com"));  // 객체를 영속성 컨텍스트(Persistence Context)에 저장
+        tx.commit();    // DB 테이블에 저장
+
+        tx.begin();
+        Member member = em.find(Member.class, 1L);   // 삭제할 정보 조회
+        em.remove(member);     // 1차 캐시에 있는 엔티티를 제거를 요청
+        tx.commit();     // 1차 캐시에 있는 엔티티를 제거하고 DB에서도 제거 // 1차 캐시에 있는 엔티티를 제거하고, 쓰기 지연 SQL 저장소에 등록된 DELETE 쿼리가 실행
+
     }
 }
