@@ -21,11 +21,11 @@ public class JpaBasicConfig {
         this.tx = em.getTransaction();
 
         return args -> {
-            example02(); // Member 엔티티 클래스의 객체를 JPA의 영속성 컨텍스트에 저장
+            example03();
         };
     }
 
-    private void example01() {
+    private void example01() { // Member 엔티티 클래스의 객체를 JPA의 영속성 컨텍스트에 저장
         Member member = new Member("hgd@gmail.com");
 
         em.persist(member);
@@ -35,7 +35,7 @@ public class JpaBasicConfig {
                 resultMember.getEmail());
     }
 
-    private void example02() {
+    private void example02() { // Member 엔티티 클래스의 객체를 JPA의 영속성 컨텍스트에 있는 1차캐쉬 + DB 테이블에 저장
         tx.begin(); // Transaction을 시작하기 위해서 tx.begin() 메서드를 먼저 호출해야 함
         Member member = new Member("hgd@gmail.com");
 
@@ -51,5 +51,18 @@ public class JpaBasicConfig {
 
         System.out.println(resultMember2 == null);
 
+    }
+
+    private void example03() { // 쓰기 지연(쿼리문 저장소)을 통한 영속성 컨텍스트와 테이블에 엔티티 일괄 저장
+        tx.begin();
+
+        Member member1 = new Member("hgd1@gmail.com");
+        Member member2 = new Member("hgd2@gmail.com");
+
+        em.persist(member1);
+        em.persist(member2);
+
+
+        tx.commit();
     }
 }
