@@ -2,10 +2,10 @@ spring:
   h2:
     console:
       enabled: true
-      path: /h2     # (1) Context path
+      path: /h2              # Context path
   datasource:
-    url: jdbc:h2:mem:test     # (2) JDBC URL
+    url: jdbc:h2:mem:test    # JDBC URL
   jpa:
     hibernate:
-      ddl-auto: create
-    show-sql: true
+      ddl-auto: create      # 스키마 자동생성
+    show-sql: true          # SQL 쿼리 출력
