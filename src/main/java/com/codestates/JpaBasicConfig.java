@@ -21,7 +21,7 @@ public class JpaBasicConfig {
         this.tx = em.getTransaction();
 
         return args -> {
-            example03();
+            example04();
         };
     }
 
@@ -53,7 +53,8 @@ public class JpaBasicConfig {
 
     }
 
-    private void example03() { // 쓰기 지연(쿼리문 저장소)을 통한 영속성 컨텍스트와 테이블에 엔티티 일괄 저장
+    private void example03() { // example02()메서드와 동일한 방식
+        // 쓰기 지연(쿼리문 저장소)을 통한 영속성 컨텍스트와 테이블에 엔티티 일괄 저장
         tx.begin();
 
         Member member1 = new Member("hgd1@gmail.com");
@@ -64,5 +65,17 @@ public class JpaBasicConfig {
 
 
         tx.commit();
+    }
+
+    private void example04() { // DB에 저장하고 수정하는 메서드
+        tx.begin(); // Transaction을 시작하기 위해서 사용
+        em.persist(new Member("hgd1@gmail.com"));    // 객체를 영속성 컨텍스트의 1차 캐시에 저장
+        tx.commit();    // 영속성 컨텍스트의 쓰기 지연 SQL 저장소에 등록된 INSERT 쿼리를 실행 (DB 테이블에 저장)
+
+
+        tx.begin();
+        Member member1 = em.find(Member.class, 1L);  // 테이블에 저장된 객체를 영속성 컨텍스트의 1차 캐시에서 조회
+        member1.setEmail("hgd1@yahoo.co.kr");       //  setter 메서드로 정보를 변경
+        tx.commit();   // 다시 DB 테이블에 저장
     }
 }
