@@ -1,6 +1,7 @@
 package com.codestates;
 
 import com.codestates.member.Member;
+import com.codestates.order.Order;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,10 +22,27 @@ public class JpaBasicConfig {
         this.tx = em.getTransaction();
 
         return args -> {
-            //testEmailNotNull(); // null값 넣으려 하면 오류 발생
-            //testEmailUpdatable(); // 업데이트 안됨
-            //testEmailUnique();
+            mappingManyToOneUniDirection();
         };
+    }
+
+    private void mappingManyToOneUniDirection() {
+        tx.begin();
+        Member member = new Member("hgd@gmail.com", "Hong Gil Dong",
+                "010-1111-1111");
+
+        em.persist(member); // 정보 저장
+
+        Order order = new Order();
+        order.addMember(member);     // 외래키 역할을 하는 객체 저장
+        em.persist(order);
+
+        tx.commit();
+
+        Order findOrder = em.find(Order.class, 1L);
+
+        System.out.println("findOrder: " + findOrder.getMember().getMemberId() +
+                ", " + findOrder.getMember().getEmail());
     }
 
     private void example01() { // Member 엔티티 클래스의 객체를 JPA의 영속성 컨텍스트에 저장
