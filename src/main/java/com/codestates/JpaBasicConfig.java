@@ -22,8 +22,35 @@ public class JpaBasicConfig {
         this.tx = em.getTransaction();
 
         return args -> {
-            mappingManyToOneUniDirection();
+            mappingManyToOneBiDirection();
         };
+    }
+
+    private void mappingManyToOneBiDirection() {
+        tx.begin();
+        Member member = new Member("hgd@gmail.com", "Hong Gil Dong",
+                "010-1111-1111");
+        Order order = new Order();
+
+        member.addOrder(order);
+        order.addMember(member);
+
+        em.persist(member);
+        em.persist(order);
+
+        tx.commit();
+
+        Member findMember = em.find(Member.class, 1L); // 1차 캐시에서 정보 조회
+
+        // 이제 주문한 회원의 회원 정보를 통해 주문 정보를 가져올 수 있다.
+        findMember
+                .getOrders()
+                .stream()
+                .forEach(findOrder -> {
+                    System.out.println("findOrder: " +
+                            findOrder.getOrderId() + ", "
+                            + findOrder.getOrderStatus());
+                });
     }
 
     private void mappingManyToOneUniDirection() {

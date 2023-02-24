@@ -1,11 +1,14 @@
 package com.codestates.member;
 
+import com.codestates.order.Order;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -32,6 +35,9 @@ public class Member {
     @Column(nullable = false, name = "LAST_MODIFIED_AT") // 필드명과 다른 이름으로 컬럼 생성
     private LocalDateTime modifiedAt = LocalDateTime.now();
 
+    @OneToMany(mappedBy = "member")
+    private List<Order> orders = new ArrayList<>();
+
     @Transient // 테이블 컬럼과 매핑하지 않겠다는 의미
     private String age;
 
@@ -43,5 +49,9 @@ public class Member {
         this.email = email;
         this.name = name;
         this.phone = phone;
+    }
+
+    public void addOrder(Order order) {
+        orders.add(order);
     }
 }
