@@ -21,7 +21,9 @@ public class JpaBasicConfig {
         this.tx = em.getTransaction();
 
         return args -> {
-            example05();
+            //testEmailNotNull(); // null값 넣으려 하면 오류 발생
+            //testEmailUpdatable(); // 업데이트 안됨
+            //testEmailUnique();
         };
     }
 
@@ -75,7 +77,7 @@ public class JpaBasicConfig {
 
         tx.begin();
         Member member1 = em.find(Member.class, 1L);  // 테이블에 저장된 객체를 영속성 컨텍스트의 1차 캐시에서 조회
-        member1.setEmail("hgd1@yahoo.co.kr");       //  setter 메서드로 정보를 변경
+        //member1.setEmail("hgd1@yahoo.co.kr");       //  setter 메서드로 정보를 변경
         tx.commit();   // 다시 DB 테이블에 저장
     }
 
@@ -89,5 +91,26 @@ public class JpaBasicConfig {
         em.remove(member);     // 1차 캐시에 있는 엔티티를 제거를 요청
         tx.commit();     // 1차 캐시에 있는 엔티티를 제거하고 DB에서도 제거 // 1차 캐시에 있는 엔티티를 제거하고, 쓰기 지연 SQL 저장소에 등록된 DELETE 쿼리가 실행
 
+    }
+
+    private void testEmailNotNull() {
+        tx.begin();
+        em.persist(new Member());
+        tx.commit();
+    }
+
+    private void testEmailUpdatable() {
+        tx.begin();
+        em.persist(new Member("hgd@gmail.com"));
+        Member member = em.find(Member.class, 1L);
+        member.setEmail("hgd@yahoo.co.kr");
+        tx.commit();
+    }
+
+    private void testEmailUnique() {
+        tx.begin();
+        em.persist(new Member("hgd@gmail.com"));
+        em.persist(new Member("hgd@gmail.com"));
+        tx.commit();
     }
 }
